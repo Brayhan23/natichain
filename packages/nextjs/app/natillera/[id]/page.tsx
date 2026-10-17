@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useAccount } from "wagmi";
+import { useAccount, usePublicClient } from "wagmi";
 import {
   ArrowLeftIcon,
   CheckCircleIcon,
@@ -34,7 +34,7 @@ import {
   useFaltan,
 } from "~~/components/natichain/utils";
 import { RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
-import { useScaffoldReadContract, useScaffoldWatchContractEvent } from "~~/hooks/scaffold-eth";
+import { useDeployedContractInfo, useScaffoldReadContract, useScaffoldWatchContractEvent } from "~~/hooks/scaffold-eth";
 
 const C = "NatiChain" as const;
 
@@ -132,6 +132,8 @@ export default function DetalleNatillera() {
     watch: true,
   });
   const { enviar, fase, ocupado } = useNatiTx();
+  const publicClient = usePublicClient();
+  const { data: info } = useDeployedContractInfo({ contractName: C });
 
   const [accion, setAccion] = useState<string>("");
   const [error, setError] = useState("");
@@ -182,12 +184,12 @@ export default function DetalleNatillera() {
   const ultimoMinuto = abierta && faltan <= 60;
   const motivoOcupado = ocupado ? "Hay una transacción en curso: espera a que termine" : undefined;
 
-  async function ejecutar(nombreAccion: string, fn: () => Promise<unknown>, alTerminar?: () => void) {
+  async function ejecutar<T>(nombreAccion: string, fn: () => Promise<T>, alTerminar?: (r: T) => void) {
     setError("");
     setAccion(nombreAccion);
     try {
-      await fn();
-      alTerminar?.();
+      const r = await fn();
+      alTerminar?.(r);
     } catch (e) {
       setAccion("");
       const m = mensajeError(e);
@@ -206,8 +208,35 @@ export default function DetalleNatillera() {
   const retirar = () =>
     ejecutar(
       "retirar",
-      () => enviar("retirar", [id], "Tu plata ya está en tu wallet."),
-      () => !abierta && setModal("diciembre"),
+      async () => {
+        // Antes del cierre (hora de la cadena) no se envía nada: el contrato lo rechazaría.
+        if (abierta) {
+          setModal("bloqueado");
+          setAccion("");
+          return false;
+        }
+        // Respaldo: simular primero; si revierte, no se abre la wallet.
+        if (publicClient && info && address) {
+          try {
+            await publicClient.simulateContract({
+              address: info.address,
+              abi: info.abi,
+              functionName: "retirar",
+              args: [id],
+              account: address,
+            } as any);
+          } catch (e) {
+            const m = mensajeError(e);
+            if (m === "BLOQUEADO") setModal("bloqueado");
+            else setError(m);
+            setAccion("");
+            return false;
+          }
+        }
+        await enviar("retirar", [id], "Tu plata ya está en tu wallet.");
+        return true;
+      },
+      ok => ok && setModal("diciembre"),
     );
   const salir = () =>
     ejecutar(

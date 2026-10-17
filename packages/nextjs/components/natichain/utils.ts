@@ -21,7 +21,17 @@ export const colorDe = (a: string) => {
 
 /** Traduce los errores del contrato y de MetaMask a español de persona */
 export function mensajeError(e: unknown): string {
-  const t = String((e as any)?.shortMessage || (e as any)?.message || e);
+  const x = e as any;
+  const t = [
+    x?.shortMessage,
+    x?.details,
+    x?.cause?.reason,
+    x?.cause?.shortMessage,
+    x?.message,
+    typeof e === "string" ? e : "",
+  ]
+    .filter(Boolean)
+    .join(" | ");
   if (/User (rejected|denied)/i.test(t)) return "Cancelaste la firma en MetaMask. No pasó nada.";
   if (t.includes("Aun no es fecha de cierre")) return "BLOQUEADO";
   if (t.includes("La natillera ya cerro")) return "Esta natillera ya cerró: ya no recibe miembros ni aportes.";
