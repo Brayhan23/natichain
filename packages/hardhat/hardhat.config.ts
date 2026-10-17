@@ -49,6 +49,8 @@ const config: HardhatUserConfig = {
     // View the networks that are pre-configured.
     // If the network you are looking for is not here you can add new network settings
     hardhat: {
+      // NatiChain v2 sin optimizer pesa ~27 KB (> 24 KB de EIP-170); Monad admite contratos de hasta 128 KB
+      allowUnlimitedContractSize: true,
       forking: {
         url: `https://eth-mainnet.alchemyapi.io/v2/${providerApiKey}`,
         enabled: process.env.MAINNET_FORKING_ENABLED === "true",
