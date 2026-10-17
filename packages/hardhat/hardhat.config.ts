@@ -26,17 +26,18 @@ const config: HardhatUserConfig = {
   solidity: {
     compilers: [
       {
-        version: "0.8.20",
+        version: "0.8.28",
         settings: {
+          evmVersion: "prague",
           optimizer: {
-            enabled: true,
-            // https://docs.soliditylang.org/en/latest/using-the-compiler.html#optimizer-options
+            enabled: false,
             runs: 200,
           },
         },
       },
     ],
   },
+
   defaultNetwork: "localhost",
   namedAccounts: {
     deployer: {

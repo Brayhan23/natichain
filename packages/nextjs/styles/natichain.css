@@ -1,0 +1,360 @@
+/* ============ NatiChain — identidad visual ============
+   Idea: la alcancía de marrano de barro paisa.
+   Barro, papel de cuaderno de natillera y oro de diciembre.
+   Bordes gruesos y sombras sólidas (nada de degradados genéricos). */
+
+.nc-root {
+  --barro: #c2532b;
+  --barro-osc: #8e3a1c;
+  --barro-claro: #f2c9b0;
+  --crema: #fbf3e4;
+  --papel: #f4e6cc;
+  --cafe: #2b1a12;
+  --cafe-suave: #6b5446;
+  --oro: #e8a83a;
+  --oro-claro: #fbe3b0;
+  --verde: #2f6b4f;
+  --verde-claro: #d7eadf;
+  --rojo: #b23a2e;
+  --borde: 2px solid var(--cafe);
+  --sombra: 4px 4px 0 var(--cafe);
+  --sombra-lg: 6px 6px 0 var(--cafe);
+  --radio: 14px;
+
+  min-height: 100vh;
+  color: var(--cafe);
+  background-color: var(--crema);
+  background-image:
+    radial-gradient(rgba(43, 26, 18, 0.06) 1px, transparent 1px),
+    radial-gradient(rgba(194, 83, 43, 0.05) 1px, transparent 1px);
+  background-size: 22px 22px, 37px 37px;
+  background-position: 0 0, 11px 7px;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+
+.nc-wrap { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+
+/* ---------- Tipografía ---------- */
+.nc-display { letter-spacing: -0.02em; line-height: 1.05; }
+.nc-h1 { font-size: clamp(2.2rem, 5.5vw, 4rem); font-weight: 800; }
+.nc-h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 700; }
+.nc-h3 { font-size: 1.25rem; font-weight: 700; }
+.nc-muted { color: var(--cafe-suave); }
+.nc-subrayado {
+  background: linear-gradient(transparent 62%, var(--oro) 62%, var(--oro) 90%, transparent 90%);
+  padding: 0 4px;
+}
+.nc-mono { font-variant-numeric: tabular-nums; }
+
+/* ---------- Navegación ---------- */
+.nc-nav {
+  position: sticky; top: 0; z-index: 30;
+  background: var(--crema);
+  border-bottom: var(--borde);
+}
+.nc-nav-in { display: flex; align-items: center; justify-content: space-between; height: 68px; gap: 12px; }
+.nc-logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.35rem; color: var(--cafe); text-decoration: none; }
+.nc-logo small { display: block; font-size: 0.7rem; font-weight: 500; color: var(--cafe-suave); letter-spacing: 0; }
+.nc-nav-links { display: flex; align-items: center; gap: 18px; }
+.nc-nav-links a { color: var(--cafe); text-decoration: none; font-weight: 500; }
+.nc-nav-links a:hover { color: var(--barro); }
+@media (max-width: 640px) { .nc-nav-links .nc-hide-sm { display: none; } }
+
+/* ---------- Botones ---------- */
+.nc-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 12px 20px; border: var(--borde); border-radius: 999px;
+  font-weight: 700; font-size: 1rem; cursor: pointer; text-decoration: none;
+  background: var(--crema); color: var(--cafe); box-shadow: var(--sombra);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.15s;
+  white-space: nowrap;
+}
+.nc-btn:hover:not(:disabled) { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 var(--cafe); }
+.nc-btn:active:not(:disabled) { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--cafe); }
+.nc-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.nc-btn-barro { background: var(--barro); color: var(--crema); }
+.nc-btn-oro { background: var(--oro); color: var(--cafe); }
+.nc-btn-verde { background: var(--verde); color: var(--crema); }
+.nc-btn-ghost { background: transparent; box-shadow: none; }
+.nc-btn-ghost:hover:not(:disabled) { background: var(--papel); box-shadow: none; transform: none; }
+.nc-btn-lg { padding: 16px 26px; font-size: 1.1rem; }
+.nc-btn-block { width: 100%; }
+.nc-btn-sm { padding: 7px 14px; font-size: 0.9rem; box-shadow: 3px 3px 0 var(--cafe); }
+
+.nc-spinner {
+  width: 16px; height: 16px; border-radius: 50%;
+  border: 2.5px solid currentColor; border-right-color: transparent;
+  animation: nc-spin 0.7s linear infinite;
+}
+@keyframes nc-spin { to { transform: rotate(360deg); } }
+
+/* ---------- Tarjetas ---------- */
+.nc-card {
+  background: #fffaf0; border: var(--borde); border-radius: var(--radio);
+  box-shadow: var(--sombra-lg); padding: 24px;
+}
+.nc-card-papel {
+  background-color: #fffaf0;
+  background-image: repeating-linear-gradient(transparent, transparent 31px, rgba(194, 83, 43, 0.12) 31px, rgba(194, 83, 43, 0.12) 32px);
+}
+
+/* ---------- Hero ---------- */
+.nc-hero { padding: 56px 0 40px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: center; }
+@media (max-width: 860px) { .nc-hero { grid-template-columns: 1fr; padding-top: 32px; } }
+.nc-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--oro-claro); border: var(--borde); border-radius: 999px;
+  padding: 4px 12px; font-size: 0.85rem; font-weight: 700; margin-bottom: 18px;
+}
+.nc-hero p.nc-lead { font-size: 1.2rem; margin: 18px 0 28px; max-width: 34ch; color: var(--cafe-suave); }
+.nc-hero-ctas { display: flex; flex-wrap: wrap; gap: 14px; }
+.nc-hero-art { position: relative; display: flex; justify-content: center; }
+
+.nc-sello {
+  position: absolute; background: var(--crema); border: var(--borde); border-radius: 10px;
+  padding: 8px 12px; font-size: 0.85rem; font-weight: 700; box-shadow: var(--sombra);
+  max-width: 190px; line-height: 1.25;
+}
+.nc-sello span { display: block; font-weight: 500; color: var(--cafe-suave); font-size: 0.78rem; }
+.nc-sello-1 { top: 4%; left: -2%; transform: rotate(-4deg); }
+.nc-sello-2 { bottom: 10%; right: -2%; transform: rotate(3deg); background: var(--oro-claro); }
+@media (max-width: 480px) { .nc-sello { position: static; transform: none; margin-top: 10px; max-width: none; } .nc-hero-art { flex-direction: column; align-items: stretch; } }
+
+/* ---------- Pasos ---------- */
+.nc-pasos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 20px 0 8px; }
+@media (max-width: 860px) { .nc-pasos { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px) { .nc-pasos { grid-template-columns: 1fr; } }
+.nc-paso { background: #fffaf0; border: var(--borde); border-radius: var(--radio); padding: 18px; box-shadow: var(--sombra); }
+.nc-paso b.nc-num {
+  display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 50%;
+  background: var(--barro); color: var(--crema); border: var(--borde); margin-bottom: 10px; font-size: 1rem;
+}
+.nc-paso:nth-child(4) b.nc-num { background: var(--oro); color: var(--cafe); }
+
+.nc-section { padding: 48px 0; }
+.nc-section-head { display: flex; align-items: end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
+
+/* ---------- Formulario ---------- */
+.nc-form { display: grid; gap: 22px; }
+.nc-label { display: block; font-weight: 700; margin-bottom: 8px; }
+.nc-help { font-size: 0.85rem; color: var(--cafe-suave); margin-top: 6px; }
+.nc-input {
+  width: 100%; padding: 14px 16px; border: var(--borde); border-radius: 12px;
+  background: var(--crema); color: var(--cafe); font-size: 1.05rem; font-weight: 500;
+}
+.nc-input::placeholder { color: #a8927f; }
+.nc-input-group { position: relative; }
+.nc-input-group .nc-sufijo { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); font-weight: 700; color: var(--cafe-suave); }
+
+.nc-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.nc-chip {
+  padding: 8px 14px; border: var(--borde); border-radius: 999px; background: var(--crema);
+  font-weight: 600; cursor: pointer; font-size: 0.92rem; color: var(--cafe);
+}
+.nc-chip[aria-pressed="true"] { background: var(--cafe); color: var(--crema); }
+.nc-chip small { font-weight: 500; opacity: 0.75; }
+
+.nc-stepper { display: inline-flex; align-items: center; border: var(--borde); border-radius: 999px; overflow: hidden; background: var(--crema); }
+.nc-stepper button { width: 46px; height: 46px; font-size: 1.4rem; font-weight: 700; background: transparent; border: 0; cursor: pointer; color: var(--cafe); }
+.nc-stepper button:hover { background: var(--papel); }
+.nc-stepper output { min-width: 56px; text-align: center; font-weight: 800; font-size: 1.2rem; }
+
+.nc-resumen {
+  border: 2px dashed var(--cafe); border-radius: 12px; padding: 14px 16px; background: var(--oro-claro);
+  font-size: 0.95rem;
+}
+.nc-crear-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 28px; }
+@media (max-width: 860px) { .nc-crear-grid { grid-template-columns: 1fr; } }
+
+/* ---------- Lista de natilleras ---------- */
+.nc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+.nc-nat {
+  display: flex; flex-direction: column; gap: 12px; text-decoration: none; color: var(--cafe);
+  background: #fffaf0; border: var(--borde); border-radius: var(--radio); padding: 20px; box-shadow: var(--sombra);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.nc-nat:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--cafe); }
+.nc-nat-top { display: flex; justify-content: space-between; align-items: start; gap: 8px; }
+.nc-nat-saldo { font-size: 1.8rem; font-weight: 800; }
+.nc-nat-meta { display: flex; justify-content: space-between; font-size: 0.88rem; color: var(--cafe-suave); border-top: 1px dashed var(--cafe-suave); padding-top: 10px; }
+
+.nc-pill { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border: var(--borde); border-radius: 999px; font-size: 0.78rem; font-weight: 700; white-space: nowrap; }
+.nc-pill-abierta { background: var(--verde-claro); }
+.nc-pill-cerrada { background: var(--oro); }
+.nc-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--verde); animation: nc-pulse 1.6s infinite; }
+@keyframes nc-pulse { 50% { opacity: 0.3; } }
+
+.nc-vacio { text-align: center; padding: 40px 20px; border: 2px dashed var(--cafe-suave); border-radius: var(--radio); color: var(--cafe-suave); }
+
+/* ---------- Detalle ---------- */
+.nc-detalle { display: grid; grid-template-columns: 1.15fr 1fr; gap: 28px; align-items: start; padding: 28px 0 56px; }
+@media (max-width: 900px) { .nc-detalle { grid-template-columns: 1fr; } }
+.nc-volver { display: inline-flex; align-items: center; gap: 6px; color: var(--cafe); font-weight: 600; text-decoration: none; margin-top: 24px; }
+.nc-volver:hover { color: var(--barro); }
+
+.nc-alcancia { text-align: center; position: relative; overflow: hidden; }
+.nc-saldo-grande { font-size: clamp(2.6rem, 6vw, 3.6rem); font-weight: 800; line-height: 1; margin-top: 8px; }
+.nc-saldo-grande small { font-size: 0.4em; font-weight: 700; color: var(--cafe-suave); margin-left: 6px; }
+
+.nc-cuenta { display: flex; justify-content: center; gap: 10px; margin: 18px 0 6px; }
+.nc-cuenta div { background: var(--cafe); color: var(--crema); border-radius: 10px; padding: 8px 12px; min-width: 64px; }
+.nc-cuenta b { display: block; font-size: 1.6rem; line-height: 1; }
+.nc-cuenta span { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.8; }
+
+.nc-barra { height: 14px; border: var(--borde); border-radius: 999px; background: var(--crema); overflow: hidden; margin-top: 14px; }
+.nc-barra i { display: block; height: 100%; background: repeating-linear-gradient(45deg, var(--barro), var(--barro) 8px, var(--barro-osc) 8px, var(--barro-osc) 16px); transition: width 1s linear; }
+
+.nc-reglas { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 18px; margin-top: 8px; font-size: 0.95rem; }
+.nc-reglas dt { color: var(--cafe-suave); font-size: 0.82rem; }
+.nc-reglas dd { margin: 0; font-weight: 700; }
+
+.nc-panel { display: grid; gap: 16px; }
+.nc-mis-cuotas { display: flex; gap: 8px; }
+.nc-moneda {
+  width: 38px; height: 38px; border-radius: 50%; border: var(--borde);
+  background: var(--crema); display: grid; place-items: center; font-weight: 800; font-size: 0.85rem; color: var(--cafe-suave);
+}
+.nc-moneda.llena { background: radial-gradient(circle at 35% 35%, #ffd98a, var(--oro) 60%, #b87d1e); color: var(--cafe); }
+
+.nc-aviso { border: var(--borde); border-radius: 12px; padding: 12px 14px; font-size: 0.92rem; background: var(--papel); }
+.nc-aviso-ok { background: var(--verde-claro); }
+.nc-aviso-error { background: #f6d5cf; }
+
+.nc-miembros { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+.nc-miembros th { text-align: left; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--cafe-suave); padding: 8px 6px; border-bottom: var(--borde); }
+.nc-miembros td { padding: 10px 6px; border-bottom: 1px dashed rgba(43, 26, 18, 0.25); }
+.nc-yo { background: var(--oro-claro); border: var(--borde); border-radius: 6px; padding: 1px 6px; font-size: 0.75rem; font-weight: 700; margin-left: 6px; }
+.nc-avatar { display: inline-block; width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--cafe); vertical-align: middle; margin-right: 8px; }
+
+.nc-link { color: var(--barro-osc); font-weight: 600; }
+.nc-link:hover { color: var(--barro); }
+
+/* ---------- Modal ---------- */
+.nc-overlay { position: fixed; inset: 0; z-index: 60; background: rgba(43, 26, 18, 0.55); display: grid; place-items: center; padding: 20px; animation: nc-fade 0.15s ease; }
+.nc-modal { max-width: 460px; width: 100%; text-align: center; animation: nc-pop 0.25s cubic-bezier(.2,1.4,.4,1); }
+@keyframes nc-fade { from { opacity: 0; } }
+@keyframes nc-pop { from { transform: scale(0.85); opacity: 0; } }
+
+.nc-estampa {
+  display: inline-block; border: 4px solid var(--rojo); color: var(--rojo); border-radius: 10px;
+  padding: 6px 18px; font-size: 2.2rem; font-weight: 800; letter-spacing: 0.06em;
+  transform: rotate(-6deg); margin: 6px 0 18px; animation: nc-estampa 0.4s cubic-bezier(.2,1.6,.4,1);
+}
+@keyframes nc-estampa { from { transform: rotate(-6deg) scale(2.2); opacity: 0; } }
+
+.nc-pie { border-top: var(--borde); padding: 22px 0; font-size: 0.88rem; color: var(--cafe-suave); }
+.nc-pie-in { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+
+.nc-ico { width: 19px; height: 19px; flex: none; vertical-align: -3px; color: var(--cafe); stroke-width: 2; }
+.nc-ico-inline { margin-right: 6px; }
+.nc-ico-grande { width: 40px; height: 40px; margin: 0 auto 6px; display: block; }
+.nc-marrano-flota { animation: nc-flota 3.6s ease-in-out infinite; }
+.nc-marrano-sombra { transform-origin: 120px 188px; animation: nc-sombra 3.6s ease-in-out infinite; }
+@keyframes nc-flota { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+@keyframes nc-sombra { 0%, 100% { transform: scaleX(1); } 50% { transform: scaleX(0.92); } }
+
+/* ---------- Franja del contrato verificado ---------- */
+.nc-franja { position: sticky; top: 0; z-index: 40; height: 36px; background: var(--cafe); color: var(--crema); font-size: 0.85rem; }
+.nc-franja-in { height: 36px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.nc-franja-txt { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; white-space: nowrap; }
+.nc-franja .nc-ico { color: var(--oro); width: 18px; height: 18px; vertical-align: 0; }
+.nc-franja-links { display: inline-flex; gap: 16px; }
+.nc-franja a { color: var(--crema); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
+.nc-franja a:hover { color: var(--oro); }
+.nc-franja *:focus-visible { outline-color: var(--oro); }
+.nc-corto { display: none; }
+@media (max-width: 560px) { .nc-largo { display: none; } .nc-corto { display: inline; } .nc-franja { font-size: 0.78rem; } .nc-franja-links { gap: 12px; } }
+.nc-nav { top: 36px; }
+
+/* ---------- Marrano: lluvia de monedas ---------- */
+.nc-marrano { position: relative; display: inline-block; max-width: 100%; }
+.nc-marrano svg { display: block; max-width: 100%; height: auto; }
+.nc-gota {
+  position: absolute; z-index: 3; border-radius: 50%; border: 2px solid var(--cafe); opacity: 0; pointer-events: none;
+  background: radial-gradient(circle at 35% 35%, #ffd98a, var(--oro) 60%, #b87d1e);
+  animation: nc-gota 0.78s cubic-bezier(.5,0,.85,.5) both;
+}
+@keyframes nc-gota {
+  0% { opacity: 0; transform: translate(0, 0) scale(0.7) rotate(0); }
+  12% { opacity: 1; }
+  82% { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--dx), var(--caida)) scale(1) rotate(var(--rot)); }
+}
+
+/* ---------- Revelar al hacer scroll ---------- */
+.nc-revela { opacity: 0; transform: translateY(16px); transition: opacity 0.4s ease, transform 0.4s ease; }
+.nc-revela-in { opacity: 1; transform: none; }
+
+/* ---------- Skeletons tipo papel ---------- */
+.nc-skel {
+  display: inline-block; vertical-align: middle; border-radius: 8px;
+  background: linear-gradient(100deg, var(--papel) 30%, #fffaf0 50%, var(--papel) 70%);
+  background-size: 220% 100%; animation: nc-skel 1.3s ease-in-out infinite;
+}
+@keyframes nc-skel { from { background-position: 120% 0; } to { background-position: -120% 0; } }
+.nc-nat-skel { min-height: 170px; display: flex; flex-direction: column; gap: 14px; }
+
+/* ---------- Tooltips de botones deshabilitados ---------- */
+.nc-tip { display: inline-block; }
+.nc-tip-block { display: block; }
+
+/* ---------- Cuenta regresiva ---------- */
+.nc-cuenta b.nc-dig { animation: nc-dig 0.28s ease-out; }
+@keyframes nc-dig { from { opacity: 0.2; transform: translateY(-6px); } }
+.nc-cuenta-final div { background: var(--rojo); animation: nc-latido 1.2s ease-in-out infinite; }
+@keyframes nc-latido { 50% { transform: scale(1.05); } }
+
+/* ---------- Estados del botón de transacción ---------- */
+.nc-btn[data-fase="ok"] { background: var(--verde); color: var(--crema); }
+.nc-btn[data-fase="firma"], .nc-btn[data-fase="confirma"] { opacity: 1; cursor: progress; }
+.nc-btn .nc-ico { color: currentColor; }
+.nc-btn-barro .nc-ico, .nc-btn-verde .nc-ico { color: var(--crema); }
+
+/* ---------- Confeti dorado ---------- */
+.nc-confeti { position: fixed; inset: 0; z-index: 70; pointer-events: none; overflow: hidden; }
+.nc-confeti i {
+  position: absolute; top: -14px; width: 9px; height: 14px; border: 1.5px solid var(--cafe); border-radius: 2px; opacity: 0;
+  animation: nc-confeti 2s cubic-bezier(.3,.6,.5,1) both;
+}
+@keyframes nc-confeti {
+  0% { opacity: 1; transform: translate(0, 0) rotate(0); }
+  85% { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--vaiven), 105vh) rotate(var(--giro)); }
+}
+
+/* ---------- Accesibilidad ---------- */
+.nc-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.nc-root *:focus-visible { outline: 3px solid var(--cafe); outline-offset: 3px; }
+.nc-franja *:focus-visible { outline-color: var(--crema); }
+.nc-input::placeholder { color: #7d6858; }
+
+/* ---------- Página de confianza ---------- */
+.nc-contrato { display: grid; gap: 16px; }
+.nc-dir { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.nc-dir code { font-size: 0.95rem; background: var(--crema); border: var(--borde); border-radius: 10px; padding: 8px 12px; word-break: break-all; }
+.nc-insignia { display: inline-flex; align-items: center; gap: 6px; background: var(--verde-claro); border: var(--borde); border-radius: 999px; padding: 4px 12px; font-weight: 700; font-size: 0.85rem; }
+.nc-dos { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+@media (max-width: 760px) { .nc-dos { grid-template-columns: 1fr; } }
+.nc-lista { display: grid; gap: 12px; padding: 0; list-style: none; margin-top: 12px; }
+.nc-lista li { display: flex; gap: 10px; align-items: flex-start; }
+.nc-lista .nc-ico { margin-top: 3px; }
+.nc-ok { color: var(--verde); }
+.nc-no { color: var(--rojo); }
+.nc-tabla-scroll { overflow-x: auto; margin-top: 12px; }
+.nc-tabla { width: 100%; border-collapse: collapse; font-size: 0.93rem; min-width: 520px; }
+.nc-tabla th { text-align: left; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--cafe-suave); padding: 8px 8px; border-bottom: var(--borde); }
+.nc-tabla td { padding: 9px 8px; border-bottom: 1px dashed rgba(43, 26, 18, 0.25); vertical-align: top; }
+.nc-tabla td:first-child { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 700; white-space: nowrap; }
+.nc-tres { display: grid; gap: 14px; margin-top: 14px; padding: 0; list-style: none; counter-reset: paso; }
+.nc-tres > li { display: flex; gap: 12px; align-items: flex-start; }
+.nc-tres > li > b { flex: none; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--barro); color: var(--crema); border: var(--borde); }
+.nc-libro { display: grid; gap: 0; margin-top: 10px; }
+.nc-libro-fila { display: flex; justify-content: space-between; gap: 12px; padding: 11px 0; border-bottom: 1px dashed rgba(43, 26, 18, 0.3); align-items: baseline; flex-wrap: wrap; }
+.nc-libro-fila:last-child { border-bottom: 0; }
+.nc-libro-fila > span:first-child { flex: 1 1 280px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .nc-root *, .nc-root *::before, .nc-root *::after { animation: none !important; transition: none !important; }
+}

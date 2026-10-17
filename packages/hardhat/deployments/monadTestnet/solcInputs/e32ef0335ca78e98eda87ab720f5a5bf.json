@@ -1,0 +1,36 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "contracts/NatiChain.sol": {
+      "content": "// SPDX-License-Identifier: MIT\r\npragma solidity 0.8.28;\r\n\r\n/// @title NatiChain - La natillera donde nadie se vuela con la plata\r\n/// @notice Ahorro grupal: nadie (ni el creador) puede retirar antes del cierre.\r\n///         No existe ninguna funcion de administrador para mover fondos.\r\ncontract NatiChain {\r\n    struct Natillera {\r\n        string nombre;\r\n        address creador;\r\n        uint256 cuota;               // en wei por aporte\r\n        uint256 numCuotas;           // maximo de cuotas por miembro\r\n        uint256 cierre;              // timestamp de \"diciembre\"\r\n        uint256 saldo;               // plata actual en esta natillera\r\n        uint256 totalAportesActivos; // aportes de quienes siguen (para repartir bono)\r\n        uint256 fondoPenalidades;    // penalidades por salida anticipada\r\n        bool existe;\r\n    }\r\n\r\n    uint256 public constant PENALIDAD_PCT = 10;\r\n    uint256 public totalNatilleras;\r\n\r\n    mapping(uint256 => Natillera) public natilleras;\r\n    mapping(uint256 => address[]) private miembros;\r\n    mapping(uint256 => mapping(address => bool)) public esMiembro;\r\n    mapping(uint256 => mapping(address => uint256)) public aportado;\r\n    mapping(uint256 => mapping(address => bool)) public yaSalio;\r\n\r\n    event NatilleraCreada(uint256 indexed id, string nombre, address indexed creador, uint256 cuota, uint256 cierre);\r\n    event MiembroUnido(uint256 indexed id, address indexed miembro);\r\n    event Aporte(uint256 indexed id, address indexed miembro, uint256 monto);\r\n    event SalidaEmergencia(uint256 indexed id, address indexed miembro, uint256 devuelto, uint256 penalidad);\r\n    event Retiro(uint256 indexed id, address indexed miembro, uint256 monto, uint256 bono);\r\n\r\n    modifier existe(uint256 id) {\r\n        require(natilleras[id].existe, \"Natillera no existe\");\r\n        _;\r\n    }\r\n\r\n    function crearNatillera(\r\n        string calldata nombre,\r\n        uint256 cuota,\r\n        uint256 numCuotas,\r\n        uint256 duracionSegundos\r\n    ) external returns (uint256 id) {\r\n        require(bytes(nombre).length > 0, \"Nombre vacio\");\r\n        require(cuota > 0 && numCuotas > 0 && duracionSegundos > 0, \"Datos invalidos\");\r\n\r\n        id = ++totalNatilleras;\r\n        Natillera storage n = natilleras[id];\r\n        n.nombre = nombre;\r\n        n.creador = msg.sender;\r\n        n.cuota = cuota;\r\n        n.numCuotas = numCuotas;\r\n        n.cierre = block.timestamp + duracionSegundos;\r\n        n.existe = true;\r\n\r\n        emit NatilleraCreada(id, nombre, msg.sender, cuota, n.cierre);\r\n        _unir(id, msg.sender);\r\n    }\r\n\r\n    function unirse(uint256 id) external existe(id) {\r\n        require(block.timestamp < natilleras[id].cierre, \"La natillera ya cerro\");\r\n        require(!esMiembro[id][msg.sender], \"Ya eres miembro\");\r\n        _unir(id, msg.sender);\r\n    }\r\n\r\n    function aportar(uint256 id) external payable existe(id) {\r\n        Natillera storage n = natilleras[id];\r\n        require(esMiembro[id][msg.sender] && !yaSalio[id][msg.sender], \"No eres miembro activo\");\r\n        require(block.timestamp < n.cierre, \"La natillera ya cerro\");\r\n        require(msg.value == n.cuota, \"El monto debe ser igual a la cuota\");\r\n        require(aportado[id][msg.sender] + msg.value <= n.cuota * n.numCuotas, \"Ya pagaste todas las cuotas\");\r\n\r\n        aportado[id][msg.sender] += msg.value;\r\n        n.saldo += msg.value;\r\n        n.totalAportesActivos += msg.value;\r\n        emit Aporte(id, msg.sender, msg.value);\r\n    }\r\n\r\n    /// @notice Calamidad: sales antes del cierre y pierdes el 10%, que queda para el grupo.\r\n    function salidaEmergencia(uint256 id) external existe(id) {\r\n        Natillera storage n = natilleras[id];\r\n        require(block.timestamp < n.cierre, \"Ya cerro: usa retirar\");\r\n        uint256 base = aportado[id][msg.sender];\r\n        require(esMiembro[id][msg.sender] && !yaSalio[id][msg.sender] && base > 0, \"Nada que retirar\");\r\n\r\n        uint256 penalidad = (base * PENALIDAD_PCT) / 100;\r\n        uint256 devolver = base - penalidad;\r\n\r\n        // Efectos antes de enviar dinero (proteccion contra reentrada)\r\n        yaSalio[id][msg.sender] = true;\r\n        aportado[id][msg.sender] = 0;\r\n        n.totalAportesActivos -= base;\r\n        n.fondoPenalidades += penalidad;\r\n        n.saldo -= devolver;\r\n\r\n        (bool ok, ) = payable(msg.sender).call{value: devolver}(\"\");\r\n        require(ok, \"Fallo el envio\");\r\n        emit SalidaEmergencia(id, msg.sender, devolver, penalidad);\r\n    }\r\n\r\n    /// @notice \"Diciembre\": despues del cierre cada quien retira lo suyo + su parte de penalidades.\r\n    function retirar(uint256 id) external existe(id) {\r\n        Natillera storage n = natilleras[id];\r\n        require(block.timestamp >= n.cierre, \"Aun no es fecha de cierre\");\r\n        uint256 base = aportado[id][msg.sender];\r\n        require(esMiembro[id][msg.sender] && !yaSalio[id][msg.sender] && base > 0, \"Nada que retirar\");\r\n\r\n        uint256 bono = (base * n.fondoPenalidades) / n.totalAportesActivos;\r\n        uint256 total = base + bono;\r\n\r\n        yaSalio[id][msg.sender] = true;\r\n        aportado[id][msg.sender] = 0;\r\n        n.saldo -= total;\r\n\r\n        (bool ok, ) = payable(msg.sender).call{value: total}(\"\");\r\n        require(ok, \"Fallo el envio\");\r\n        emit Retiro(id, msg.sender, base, bono);\r\n    }\r\n\r\n    // ---------- Lecturas para el frontend ----------\r\n\r\n    function obtenerMiembros(uint256 id) external view existe(id) returns (address[] memory) {\r\n        return miembros[id];\r\n    }\r\n\r\n    function tiempoRestante(uint256 id) external view existe(id) returns (uint256) {\r\n        uint256 c = natilleras[id].cierre;\r\n        return block.timestamp >= c ? 0 : c - block.timestamp;\r\n    }\r\n\r\n    function _unir(uint256 id, address quien) private {\r\n        esMiembro[id][quien] = true;\r\n        miembros[id].push(quien);\r\n        emit MiembroUnido(id, quien);\r\n    }\r\n}\r\n"
+    }
+  },
+  "settings": {
+    "evmVersion": "prague",
+    "optimizer": {
+      "enabled": false,
+      "runs": 200
+    },
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode",
+          "evm.deployedBytecode",
+          "evm.methodIdentifiers",
+          "metadata",
+          "devdoc",
+          "userdoc",
+          "storageLayout",
+          "evm.gasEstimates"
+        ],
+        "": [
+          "ast"
+        ]
+      }
+    },
+    "metadata": {
+      "useLiteralContent": true
+    }
+  }
+}

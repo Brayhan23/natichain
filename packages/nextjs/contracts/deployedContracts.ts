@@ -4,6 +4,439 @@
  */
 import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 
-const deployedContracts = {} as const;
+const deployedContracts = {
+  10143: {
+    NatiChain: {
+      address: "0x26A58962d00cF5DfF847C08903f8c30E6419ADd6",
+      abi: [
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "id",
+              type: "uint256",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "miembro",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "monto",
+              type: "uint256",
+            },
+          ],
+          name: "Aporte",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "id",
+              type: "uint256",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "miembro",
+              type: "address",
+            },
+          ],
+          name: "MiembroUnido",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "id",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "string",
+              name: "nombre",
+              type: "string",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "creador",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "cuota",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "cierre",
+              type: "uint256",
+            },
+          ],
+          name: "NatilleraCreada",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "id",
+              type: "uint256",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "miembro",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "monto",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "bono",
+              type: "uint256",
+            },
+          ],
+          name: "Retiro",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "id",
+              type: "uint256",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "miembro",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "devuelto",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "penalidad",
+              type: "uint256",
+            },
+          ],
+          name: "SalidaEmergencia",
+          type: "event",
+        },
+        {
+          inputs: [],
+          name: "PENALIDAD_PCT",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "aportado",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "id",
+              type: "uint256",
+            },
+          ],
+          name: "aportar",
+          outputs: [],
+          stateMutability: "payable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "nombre",
+              type: "string",
+            },
+            {
+              internalType: "uint256",
+              name: "cuota",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "numCuotas",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "duracionSegundos",
+              type: "uint256",
+            },
+          ],
+          name: "crearNatillera",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "id",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "esMiembro",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          name: "natilleras",
+          outputs: [
+            {
+              internalType: "string",
+              name: "nombre",
+              type: "string",
+            },
+            {
+              internalType: "address",
+              name: "creador",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "cuota",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "numCuotas",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "cierre",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "saldo",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "totalAportesActivos",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "fondoPenalidades",
+              type: "uint256",
+            },
+            {
+              internalType: "bool",
+              name: "existe",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "id",
+              type: "uint256",
+            },
+          ],
+          name: "obtenerMiembros",
+          outputs: [
+            {
+              internalType: "address[]",
+              name: "",
+              type: "address[]",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "id",
+              type: "uint256",
+            },
+          ],
+          name: "retirar",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "id",
+              type: "uint256",
+            },
+          ],
+          name: "salidaEmergencia",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "id",
+              type: "uint256",
+            },
+          ],
+          name: "tiempoRestante",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "totalNatilleras",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "id",
+              type: "uint256",
+            },
+          ],
+          name: "unirse",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "yaSalio",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+      ],
+      inheritedFunctions: {},
+    },
+  },
+} as const;
 
 export default deployedContracts satisfies GenericContractsDeclaration;
