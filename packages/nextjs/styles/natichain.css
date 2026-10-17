@@ -391,6 +391,19 @@
 .nc-lista-num { display: grid; gap: 10px; padding-left: 1.2rem; }
 .nc-lista-num li { list-style: decimal; padding-left: 4px; }
 
+/* ---------- Eventos, donaciones y etiquetas ---------- */
+.nc-eventos { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+.nc-evento { border: var(--borde); border-radius: var(--radio); padding: 14px; background: var(--crema); }
+.nc-evento-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+.nc-evento-tipo { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: 0.85rem; }
+.nc-inscritos { display: flex; flex-wrap: wrap; gap: 6px 14px; padding: 8px 0 0; list-style: none; font-size: 0.85rem; }
+.nc-apoyar { display: grid; gap: 2px; }
+.nc-nat-etiquetas { display: flex; flex-wrap: wrap; gap: 6px; }
+.nc-capas { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin-top: 16px; }
+.nc-capa-num { display: inline-grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--barro); color: var(--crema); border: var(--borde); margin-bottom: 8px; }
+.nc-limites { display: grid; gap: 6px; padding-left: 1.2rem; }
+.nc-limites li { list-style: disc; }
+
 @media (prefers-reduced-motion: reduce) {
   .nc-root *, .nc-root *::before, .nc-root *::after { animation: none !important; transition: none !important; }
 }

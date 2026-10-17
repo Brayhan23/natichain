@@ -64,7 +64,7 @@ export function estadoVisible(s: Sol, ahora?: number) {
   };
 }
 
-function useAccion({ enviar, fase }: TxProps) {
+export function useAccion({ enviar, fase }: TxProps) {
   const [accion, setAccion] = useState("");
   const [err, setErr] = useState("");
   async function correr(a: string, fn: () => Promise<unknown>, ok?: () => void) {

@@ -17,6 +17,7 @@ import {
   SparklesIcon,
   UserGroupIcon,
 } from "@heroicons/react/24/outline";
+import { Apoyar, SeccionEventos } from "~~/components/natichain/eventos";
 import { display } from "~~/components/natichain/fonts";
 import { AvisoMora, SolicitudDetalle, TuDiciembre } from "~~/components/natichain/prestamos";
 import { textoFase, useNatiTx } from "~~/components/natichain/tx";
@@ -450,6 +451,14 @@ export default function DetalleNatillera() {
               <p className="nc-help" style={{ marginTop: 10 }}>
                 Cada aporte es una transacción pública: nadie puede decir &quot;yo sí pagué&quot; sin prueba.
               </p>
+            </Revela>
+
+            <Revela as="section" className="nc-card">
+              <SeccionEventos id={id} nat={n} address={address} soyAportante={soyAportante} ahora={ahora} tx={tx} />
+            </Revela>
+
+            <Revela as="section" className="nc-card nc-card-papel">
+              <Apoyar id={id} nat={n} isConnected={isConnected} ahora={ahora} tx={tx} />
             </Revela>
 
             {soyMiembro && (

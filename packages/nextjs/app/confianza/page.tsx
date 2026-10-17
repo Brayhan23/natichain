@@ -71,6 +71,39 @@ const FUNCIONES: [string, string][] = [
   ],
 ];
 
+const CAPAS: [string, string][] = [
+  [
+    "Unanimidad",
+    "Un préstamo solo sale si TODOS los socios activos lo aprueban. Un solo rechazo lo cierra, y si entra un socio nuevo mientras se vota, también tiene que aprobar.",
+  ],
+  [
+    "Pagaré con huella en la blockchain",
+    "Quien pide el préstamo firma un pagaré y su huella (hash) queda grabada en el contrato. Cualquiera puede regenerar el texto y comprobar que no fue alterado.",
+  ],
+  [
+    "Tope del 50% y un préstamo a la vez",
+    "Nunca se presta más de la mitad de lo que hay en la alcancía, y solo puede haber un préstamo activo por natillera.",
+  ],
+  [
+    "Plazo antes del cierre",
+    "La fecha límite de pago siempre es anterior al cierre de la natillera, así que la mora se resuelve antes de repartir.",
+  ],
+  [
+    "Grupo congelado mientras haya préstamo",
+    "Con un préstamo activo no entran socios nuevos, nadie hace salida de emergencia y nadie retira. Así nadie se sale ni entra a medias de un riesgo compartido.",
+  ],
+  [
+    "Mora con pérdida repartida y cobro legal",
+    "Si no pagan a tiempo, cualquiera declara la mora: lo pagado entra a la alcancía y la pérdida se reparte proporcionalmente entre los socios. Para cobrar, el grupo puede apoyarse en el pagaré (hoy es una demostración; en producción sería un pagaré electrónico con firma digital).",
+  ],
+];
+
+const LIMITES = [
+  "El reparto es proporcional a lo aportado, no al tiempo: quien aporta tarde también participa de las ganancias.",
+  "Cualquier wallet puede solicitar préstamos; la defensa es la unanimidad de los socios, que son quienes aprueban cada uno.",
+  "Es un prototipo en testnet, sin auditoría externa: el MON de prueba no tiene valor real.",
+];
+
 function CopiarBtn({ texto }: { texto: string }) {
   const [ok, setOk] = useState(false);
   const copiar = async () => {
@@ -117,6 +150,70 @@ function textoMov(m: Mov, nombres: Record<string, string>) {
       return (
         <>
           {quien} salió de {nat} con {mon(m.monto)} MON (dejó {mon(m.extra)} MON para el grupo)
+        </>
+      );
+    case "PrestamoSolicitado":
+      return (
+        <>
+          {quien} pidió un préstamo de {mon(m.monto)} MON a {nat} (solicitud #{m.idSol?.toString()})
+        </>
+      );
+    case "VotoEmitido":
+      return (
+        <>
+          {quien} {m.aprueba ? "aprobó" : "rechazó"} la solicitud #{m.idSol?.toString()}
+        </>
+      );
+    case "PrestamoRechazado":
+      return (
+        <>
+          La solicitud #{m.idSol?.toString()} quedó rechazada por {quien}
+        </>
+      );
+    case "PrestamoDesembolsado":
+      return (
+        <>
+          Se desembolsó la solicitud #{m.idSol?.toString()}: {mon(m.monto)} MON salieron de {nat} con aprobación de
+          todos
+        </>
+      );
+    case "PagoPrestamo":
+      return (
+        <>
+          {quien} pagó {mon(m.monto)} MON de la solicitud #{m.idSol?.toString()} (faltan {mon(m.extra)} MON)
+        </>
+      );
+    case "PrestamoPagado":
+      return (
+        <>
+          La solicitud #{m.idSol?.toString()} se pagó completa: {nat} ganó {mon(m.monto)} MON de retorno
+        </>
+      );
+    case "PrestamoEnMora":
+      return (
+        <>
+          La solicitud #{m.idSol?.toString()} cayó en mora: se pagaron {mon(m.monto)} MON y {nat} perdió {mon(m.extra)}{" "}
+          MON
+        </>
+      );
+    case "EventoCreado":
+      return (
+        <>
+          Se creó el evento «{m.titulo}» en {nat}
+          {m.monto && m.monto > 0n ? ` (boleta de ${mon(m.monto)} MON)` : " (gratis)"}
+        </>
+      );
+    case "InscripcionEvento":
+      return (
+        <>
+          {quien} se inscribió al evento #{m.idSol?.toString()} de {nat}
+          {m.monto && m.monto > 0n ? ` y pagó ${mon(m.monto)} MON` : ""}
+        </>
+      );
+    case "Donacion":
+      return (
+        <>
+          {quien} donó {mon(m.monto)} MON a {nat}
         </>
       );
     default:
@@ -337,11 +434,32 @@ export default function Confianza() {
         </Revela>
 
         <Revela as="section" className="nc-section" style={{ paddingTop: 8 }}>
-          <div className="nc-aviso" role="note">
-            <ExclamationTriangleIcon className="nc-ico nc-ico-inline" />
-            <b>Seamos honestos:</b> esto es un prototipo en la red de pruebas (testnet) de Monad. El MON de prueba no
-            tiene valor real y el contrato no ha tenido una auditoría externa. Que el código sea público te permite
-            revisarlo, pero no reemplaza una auditoría profesional.
+          <h2 className={`nc-display nc-h2 ${display.className}`}>Cómo protegemos los préstamos</h2>
+          <div className="nc-capas">
+            {CAPAS.map(([t, d], i) => (
+              <div className="nc-card" key={t}>
+                <b className="nc-capa-num">{i + 1}</b>
+                <h3 className={`nc-h3 ${display.className}`}>{t}</h3>
+                <p className="nc-muted" style={{ marginTop: 4, fontSize: "0.95rem" }}>
+                  {d}
+                </p>
+              </div>
+            ))}
+          </div>
+        </Revela>
+
+        <Revela as="section" className="nc-section" style={{ paddingTop: 8 }}>
+          <h2 className={`nc-display nc-h2 ${display.className}`}>Límites conocidos</h2>
+          <div className="nc-aviso" role="note" style={{ marginTop: 14 }}>
+            <p style={{ marginBottom: 8 }}>
+              <ExclamationTriangleIcon className="nc-ico nc-ico-inline" />
+              <b>Seamos honestos.</b> Esto es lo que NatiChain todavía no resuelve:
+            </p>
+            <ul className="nc-limites">
+              {LIMITES.map(t => (
+                <li key={t}>{t}</li>
+              ))}
+            </ul>
           </div>
         </Revela>
       </div>

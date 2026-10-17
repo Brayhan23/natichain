@@ -1,11 +1,21 @@
 "use client";
 
 import Link from "next/link";
-import { EyeIcon, LockClosedIcon, MapPinIcon, SparklesIcon, UserGroupIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowTrendingUpIcon,
+  BanknotesIcon,
+  EyeIcon,
+  LockClosedIcon,
+  MapPinIcon,
+  SparklesIcon,
+  TicketIcon,
+  UserGroupIcon,
+} from "@heroicons/react/24/outline";
 import { CrearNatillera } from "~~/components/natichain/CrearNatillera";
+import { useEventosProximos } from "~~/components/natichain/eventos";
 import { display } from "~~/components/natichain/fonts";
 import { Marrano, Pagina, Revela, Skeleton } from "~~/components/natichain/ui";
-import { mon, textoFaltan, useFaltan } from "~~/components/natichain/utils";
+import { mon, textoFaltan, useAhoraCadena, useFaltan } from "~~/components/natichain/utils";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 
 function TarjetaNatillera({ id }: { id: bigint }) {
@@ -22,6 +32,8 @@ function TarjetaNatillera({ id }: { id: bigint }) {
     watch: true,
   });
   const faltan = useFaltan(n?.cierre);
+  const ahora = useAhoraCadena();
+  const proximos = useEventosProximos(id, ahora);
   if (!n)
     return (
       <div className="nc-nat nc-nat-skel" role="status" aria-label="Cargando natillera">
@@ -32,6 +44,9 @@ function TarjetaNatillera({ id }: { id: bigint }) {
     );
   const { nombre, cuota, numCuotas, saldo } = n;
   const abierta = faltan !== undefined && faltan > 0;
+  const ganancias = n.fondoPenalidades + n.fondoEventos + n.fondoDonaciones + n.fondoIntereses;
+  const rendBps = n.totalAportesActivos > 0n ? Number(((ganancias - n.perdidas) * 10000n) / n.totalAportesActivos) : 0;
+  const rend = rendBps / 100;
   const cargandoHora = faltan === undefined;
 
   return (
@@ -59,6 +74,30 @@ function TarjetaNatillera({ id }: { id: bigint }) {
           Ahorrado
         </div>
         <div className={`nc-nat-saldo nc-mono ${display.className}`}>{mon(saldo)} MON</div>
+      </div>
+      <div className="nc-nat-etiquetas">
+        {n.totalAportesActivos > 0n && (
+          <span
+            className="nc-pill nc-pill-abierta"
+            style={rend < 0 ? { background: "#f6d5cf", color: "var(--rojo)" } : undefined}
+          >
+            <ArrowTrendingUpIcon className="nc-ico" style={{ width: 15, height: 15 }} />
+            {rend > 0 ? "+" : ""}
+            {rend.toLocaleString("es-CO", { maximumFractionDigits: 1 })}% rendimiento
+          </span>
+        )}
+        {proximos > 0 && (
+          <span className="nc-pill nc-pill-votacion">
+            <TicketIcon className="nc-ico" style={{ width: 15, height: 15 }} />
+            {proximos} {proximos === 1 ? "evento próximo" : "eventos próximos"}
+          </span>
+        )}
+        {n.prestamoActivo !== 0n && (
+          <span className="nc-pill nc-pill-desemb">
+            <BanknotesIcon className="nc-ico" style={{ width: 15, height: 15 }} />
+            Préstamo activo
+          </span>
+        )}
       </div>
       <div className="nc-nat-meta">
         <span>

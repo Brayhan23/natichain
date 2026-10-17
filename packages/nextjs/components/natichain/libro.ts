@@ -7,7 +7,24 @@ import { useDeployedContractInfo, useTargetNetwork } from "~~/hooks/scaffold-eth
 
 export type Mov = {
   clave: string;
-  tipo: "NatilleraCreada" | "MiembroUnido" | "Aporte" | "SalidaEmergencia" | "Retiro";
+  tipo:
+    | "NatilleraCreada"
+    | "MiembroUnido"
+    | "Aporte"
+    | "SalidaEmergencia"
+    | "Retiro"
+    | "PrestamoSolicitado"
+    | "VotoEmitido"
+    | "PrestamoRechazado"
+    | "PrestamoDesembolsado"
+    | "PagoPrestamo"
+    | "PrestamoPagado"
+    | "PrestamoEnMora"
+    | "EventoCreado"
+    | "InscripcionEvento"
+    | "Donacion";
+  idSol?: bigint;
+  aprueba?: boolean;
   id: bigint;
   quien: string;
   hash: string;
@@ -16,9 +33,26 @@ export type Mov = {
   monto?: bigint;
   extra?: bigint;
   nombre?: string;
+  titulo?: string;
 };
 
-const TIPOS = ["NatilleraCreada", "MiembroUnido", "Aporte", "SalidaEmergencia", "Retiro"];
+const TIPOS = [
+  "NatilleraCreada",
+  "MiembroUnido",
+  "Aporte",
+  "SalidaEmergencia",
+  "Retiro",
+  "PrestamoSolicitado",
+  "VotoEmitido",
+  "PrestamoRechazado",
+  "PrestamoDesembolsado",
+  "PagoPrestamo",
+  "PrestamoPagado",
+  "PrestamoEnMora",
+  "EventoCreado",
+  "InscripcionEvento",
+  "Donacion",
+];
 const MAX_PETICIONES = 120; // por pasada de "ver más"
 const OBJETIVO = 25; // movimientos que queremos mostrar por pasada
 
@@ -42,8 +76,37 @@ function aMov(log: any): Mov | undefined {
       return { ...base, quien: a.miembro, monto: a.monto };
     case "SalidaEmergencia":
       return { ...base, quien: a.miembro, monto: a.devuelto, extra: a.penalidad };
-    default:
+    case "Retiro":
       return { ...base, quien: a.miembro, monto: a.pagado };
+    case "PrestamoSolicitado":
+      return { ...base, id: a.idNat, idSol: a.idSol, quien: a.prestatario, monto: a.monto, extra: a.retornoBps };
+    case "VotoEmitido":
+      return { ...base, id: 0n, idSol: a.idSol, quien: a.votante, aprueba: a.aprueba };
+    case "PrestamoRechazado":
+      return { ...base, id: 0n, idSol: a.idSol, quien: a.por };
+    case "PrestamoDesembolsado":
+      return { ...base, id: a.idNat, idSol: a.idSol, quien: "", monto: a.monto };
+    case "PagoPrestamo":
+      return { ...base, id: 0n, idSol: a.idSol, quien: a.pagador, monto: a.monto, extra: a.faltante };
+    case "PrestamoPagado":
+      return { ...base, id: a.idNat, idSol: a.idSol, quien: "", monto: a.retorno };
+    case "PrestamoEnMora":
+      return { ...base, id: a.idNat, idSol: a.idSol, quien: "", monto: a.pagado, extra: a.perdida };
+    case "EventoCreado":
+      return {
+        ...base,
+        id: a.idNat,
+        idSol: a.idEvento,
+        quien: "",
+        nombre: undefined,
+        monto: a.precio,
+        extra: undefined,
+        titulo: a.titulo,
+      };
+    case "InscripcionEvento":
+      return { ...base, id: a.idNat, idSol: a.idEvento, quien: a.quien, monto: a.precio };
+    default: // Donacion
+      return { ...base, quien: a.donante, monto: a.monto };
   }
 }
 
@@ -164,7 +227,7 @@ export function useLibro() {
     if (!client || !info) return;
     const conocidos = { ...nombres };
     movs.forEach(m => m.nombre && (conocidos[m.id.toString()] = m.nombre));
-    const faltan = [...new Set(movs.map(m => m.id.toString()))].filter(i => conocidos[i] === undefined);
+    const faltan = [...new Set(movs.map(m => m.id.toString()))].filter(i => i !== "0" && conocidos[i] === undefined);
     let vivo = true;
     Promise.all(
       faltan.map(i =>
