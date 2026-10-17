@@ -11,7 +11,7 @@ import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 function TarjetaNatillera({ id }: { id: bigint }) {
   const { data: n } = useScaffoldReadContract({
     contractName: "NatiChain",
-    functionName: "natilleras",
+    functionName: "obtenerNatillera",
     args: [id],
     watch: true,
   });
@@ -21,7 +21,7 @@ function TarjetaNatillera({ id }: { id: bigint }) {
     args: [id],
     watch: true,
   });
-  const faltan = useFaltan(n?.[4]);
+  const faltan = useFaltan(n?.cierre);
   if (!n)
     return (
       <div className="nc-nat nc-nat-skel" role="status" aria-label="Cargando natillera">
@@ -30,7 +30,7 @@ function TarjetaNatillera({ id }: { id: bigint }) {
         <Skeleton h={16} />
       </div>
     );
-  const [nombre, , cuota, numCuotas, , saldo] = n;
+  const { nombre, cuota, numCuotas, saldo } = n;
   const abierta = faltan !== undefined && faltan > 0;
   const cargandoHora = faltan === undefined;
 

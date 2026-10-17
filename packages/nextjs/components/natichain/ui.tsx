@@ -231,6 +231,9 @@ export function Pagina({ children }: { children: React.ReactNode }) {
             <Link href="/#natilleras" className="nc-hide-sm">
               Natilleras
             </Link>
+            <Link href="/financiacion" className="nc-hide-sm">
+              Pedir préstamo
+            </Link>
             <Link href="/confianza" className="nc-hide-sm">
               Confianza
             </Link>

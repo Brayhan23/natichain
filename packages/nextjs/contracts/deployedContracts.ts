@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   10143: {
     NatiChain: {
-      address: "0x26A58962d00cF5DfF847C08903f8c30E6419ADd6",
+      address: "0x3FcED7F51b5559bA1FBBB45F0bbb53Bf04409675",
       abi: [
         {
           anonymous: false,
@@ -32,6 +32,105 @@ const deployedContracts = {
             },
           ],
           name: "Aporte",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "id",
+              type: "uint256",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "donante",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "monto",
+              type: "uint256",
+            },
+          ],
+          name: "Donacion",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "idEvento",
+              type: "uint256",
+            },
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "idNat",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint8",
+              name: "tipo",
+              type: "uint8",
+            },
+            {
+              indexed: false,
+              internalType: "string",
+              name: "titulo",
+              type: "string",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "fecha",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "precio",
+              type: "uint256",
+            },
+          ],
+          name: "EventoCreado",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "idEvento",
+              type: "uint256",
+            },
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "idNat",
+              type: "uint256",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "quien",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "precio",
+              type: "uint256",
+            },
+          ],
+          name: "InscripcionEvento",
           type: "event",
         },
         {
@@ -96,6 +195,180 @@ const deployedContracts = {
             {
               indexed: true,
               internalType: "uint256",
+              name: "idSol",
+              type: "uint256",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "pagador",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "monto",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "faltante",
+              type: "uint256",
+            },
+          ],
+          name: "PagoPrestamo",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "idSol",
+              type: "uint256",
+            },
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "idNat",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "monto",
+              type: "uint256",
+            },
+          ],
+          name: "PrestamoDesembolsado",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "idSol",
+              type: "uint256",
+            },
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "idNat",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "pagado",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "perdida",
+              type: "uint256",
+            },
+          ],
+          name: "PrestamoEnMora",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "idSol",
+              type: "uint256",
+            },
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "idNat",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "retorno",
+              type: "uint256",
+            },
+          ],
+          name: "PrestamoPagado",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "idSol",
+              type: "uint256",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "por",
+              type: "address",
+            },
+          ],
+          name: "PrestamoRechazado",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "idSol",
+              type: "uint256",
+            },
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "idNat",
+              type: "uint256",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "prestatario",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "monto",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "retornoBps",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "fechaLimite",
+              type: "uint256",
+            },
+          ],
+          name: "PrestamoSolicitado",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "uint256",
               name: "id",
               type: "uint256",
             },
@@ -108,13 +381,13 @@ const deployedContracts = {
             {
               indexed: false,
               internalType: "uint256",
-              name: "monto",
+              name: "aportado",
               type: "uint256",
             },
             {
               indexed: false,
               internalType: "uint256",
-              name: "bono",
+              name: "pagado",
               type: "uint256",
             },
           ],
@@ -153,8 +426,59 @@ const deployedContracts = {
           type: "event",
         },
         {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "idSol",
+              type: "uint256",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "votante",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "bool",
+              name: "aprueba",
+              type: "bool",
+            },
+          ],
+          name: "VotoEmitido",
+          type: "event",
+        },
+        {
+          inputs: [],
+          name: "MAX_MIEMBROS",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
           inputs: [],
           name: "PENALIDAD_PCT",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "TOPE_PRESTAMO_PCT",
           outputs: [
             {
               internalType: "uint256",
@@ -205,6 +529,73 @@ const deployedContracts = {
         {
           inputs: [
             {
+              internalType: "uint256",
+              name: "idSol",
+              type: "uint256",
+            },
+          ],
+          name: "cobrarPrestamo",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "idNat",
+              type: "uint256",
+            },
+            {
+              internalType: "uint8",
+              name: "tipo",
+              type: "uint8",
+            },
+            {
+              internalType: "string",
+              name: "titulo",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "lugar",
+              type: "string",
+            },
+            {
+              internalType: "uint256",
+              name: "fecha",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "precio",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "cupo",
+              type: "uint256",
+            },
+            {
+              internalType: "bool",
+              name: "soloMiembros",
+              type: "bool",
+            },
+          ],
+          name: "crearEvento",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "idEvento",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
               internalType: "string",
               name: "nombre",
               type: "string",
@@ -240,6 +631,32 @@ const deployedContracts = {
           inputs: [
             {
               internalType: "uint256",
+              name: "idSol",
+              type: "uint256",
+            },
+          ],
+          name: "declararMora",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "id",
+              type: "uint256",
+            },
+          ],
+          name: "donar",
+          outputs: [],
+          stateMutability: "payable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
               name: "",
               type: "uint256",
             },
@@ -264,56 +681,181 @@ const deployedContracts = {
           inputs: [
             {
               internalType: "uint256",
+              name: "idNat",
+              type: "uint256",
+            },
+          ],
+          name: "eventosDe",
+          outputs: [
+            {
+              internalType: "uint256[]",
+              name: "",
+              type: "uint256[]",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "id",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "quien",
+              type: "address",
+            },
+          ],
+          name: "gananciaEstimada",
+          outputs: [
+            {
+              internalType: "int256",
+              name: "",
+              type: "int256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "id",
+              type: "uint256",
+            },
+          ],
+          name: "ganancias",
+          outputs: [
+            {
+              internalType: "uint256",
               name: "",
               type: "uint256",
             },
           ],
-          name: "natilleras",
-          outputs: [
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
             {
-              internalType: "string",
-              name: "nombre",
-              type: "string",
+              internalType: "uint256",
+              name: "idEvento",
+              type: "uint256",
+            },
+          ],
+          name: "inscribirse",
+          outputs: [],
+          stateMutability: "payable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
             },
             {
               internalType: "address",
-              name: "creador",
+              name: "",
               type: "address",
             },
-            {
-              internalType: "uint256",
-              name: "cuota",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "numCuotas",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "cierre",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "saldo",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "totalAportesActivos",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "fondoPenalidades",
-              type: "uint256",
-            },
+          ],
+          name: "inscrito",
+          outputs: [
             {
               internalType: "bool",
-              name: "existe",
+              name: "",
               type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "idEvento",
+              type: "uint256",
+            },
+          ],
+          name: "inscritosDe",
+          outputs: [
+            {
+              internalType: "address[]",
+              name: "",
+              type: "address[]",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "idEvento",
+              type: "uint256",
+            },
+          ],
+          name: "obtenerEvento",
+          outputs: [
+            {
+              components: [
+                {
+                  internalType: "uint256",
+                  name: "idNat",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint8",
+                  name: "tipo",
+                  type: "uint8",
+                },
+                {
+                  internalType: "string",
+                  name: "titulo",
+                  type: "string",
+                },
+                {
+                  internalType: "string",
+                  name: "lugar",
+                  type: "string",
+                },
+                {
+                  internalType: "uint256",
+                  name: "fecha",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "precio",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "cupo",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "inscritos",
+                  type: "uint256",
+                },
+                {
+                  internalType: "bool",
+                  name: "soloMiembros",
+                  type: "bool",
+                },
+              ],
+              internalType: "struct NatiChain.Evento",
+              name: "",
+              type: "tuple",
             },
           ],
           stateMutability: "view",
@@ -346,6 +888,191 @@ const deployedContracts = {
               type: "uint256",
             },
           ],
+          name: "obtenerNatillera",
+          outputs: [
+            {
+              components: [
+                {
+                  internalType: "string",
+                  name: "nombre",
+                  type: "string",
+                },
+                {
+                  internalType: "address",
+                  name: "creador",
+                  type: "address",
+                },
+                {
+                  internalType: "uint256",
+                  name: "cuota",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "numCuotas",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "cierre",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "saldo",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "totalAportesActivos",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "aportantesActivos",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "fondoPenalidades",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "fondoEventos",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "fondoDonaciones",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "fondoIntereses",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "perdidas",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "prestadoPendiente",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "prestamoActivo",
+                  type: "uint256",
+                },
+                {
+                  internalType: "bool",
+                  name: "existe",
+                  type: "bool",
+                },
+              ],
+              internalType: "struct NatiChain.Natillera",
+              name: "",
+              type: "tuple",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "idSol",
+              type: "uint256",
+            },
+          ],
+          name: "obtenerSolicitud",
+          outputs: [
+            {
+              components: [
+                {
+                  internalType: "uint256",
+                  name: "idNat",
+                  type: "uint256",
+                },
+                {
+                  internalType: "address",
+                  name: "prestatario",
+                  type: "address",
+                },
+                {
+                  internalType: "uint256",
+                  name: "monto",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "retornoBps",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "fechaLimite",
+                  type: "uint256",
+                },
+                {
+                  internalType: "string",
+                  name: "solicitante",
+                  type: "string",
+                },
+                {
+                  internalType: "string",
+                  name: "proposito",
+                  type: "string",
+                },
+                {
+                  internalType: "bytes32",
+                  name: "hashGarantia",
+                  type: "bytes32",
+                },
+                {
+                  internalType: "enum NatiChain.Estado",
+                  name: "estado",
+                  type: "uint8",
+                },
+                {
+                  internalType: "uint256",
+                  name: "pagado",
+                  type: "uint256",
+                },
+              ],
+              internalType: "struct NatiChain.Solicitud",
+              name: "s",
+              type: "tuple",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "idSol",
+              type: "uint256",
+            },
+          ],
+          name: "pagarPrestamo",
+          outputs: [],
+          stateMutability: "payable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "id",
+              type: "uint256",
+            },
+          ],
           name: "retirar",
           outputs: [],
           stateMutability: "nonpayable",
@@ -368,11 +1095,92 @@ const deployedContracts = {
           inputs: [
             {
               internalType: "uint256",
+              name: "idNat",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "monto",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "retornoBps",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "fechaLimite",
+              type: "uint256",
+            },
+            {
+              internalType: "string",
+              name: "solicitante",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "proposito",
+              type: "string",
+            },
+            {
+              internalType: "bytes32",
+              name: "hashGarantia",
+              type: "bytes32",
+            },
+          ],
+          name: "solicitarPrestamo",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "idSol",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "idNat",
+              type: "uint256",
+            },
+          ],
+          name: "solicitudesDe",
+          outputs: [
+            {
+              internalType: "uint256[]",
+              name: "",
+              type: "uint256[]",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
               name: "id",
               type: "uint256",
             },
           ],
           name: "tiempoRestante",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "totalEventos",
           outputs: [
             {
               internalType: "uint256",
@@ -397,6 +1205,19 @@ const deployedContracts = {
           type: "function",
         },
         {
+          inputs: [],
+          name: "totalSolicitudes",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
           inputs: [
             {
               internalType: "uint256",
@@ -407,6 +1228,110 @@ const deployedContracts = {
           name: "unirse",
           outputs: [],
           stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "id",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "quien",
+              type: "address",
+            },
+          ],
+          name: "valor",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "idNat",
+              type: "uint256",
+            },
+          ],
+          name: "votantesRequeridos",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "idSol",
+              type: "uint256",
+            },
+            {
+              internalType: "bool",
+              name: "aprueba",
+              type: "bool",
+            },
+          ],
+          name: "votar",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "votoDe",
+          outputs: [
+            {
+              internalType: "uint8",
+              name: "",
+              type: "uint8",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "idSol",
+              type: "uint256",
+            },
+          ],
+          name: "votosAFavor",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
           type: "function",
         },
         {

@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import { useAccount, usePublicClient } from "wagmi";
 import {
   ArrowLeftIcon,
+  BanknotesIcon,
   CheckCircleIcon,
   CurrencyDollarIcon,
   DocumentTextIcon,
@@ -17,11 +18,13 @@ import {
   UserGroupIcon,
 } from "@heroicons/react/24/outline";
 import { display } from "~~/components/natichain/fonts";
+import { AvisoMora, SolicitudDetalle, TuDiciembre } from "~~/components/natichain/prestamos";
 import { textoFase, useNatiTx } from "~~/components/natichain/tx";
 import { Confeti, Marrano, Modal, Pagina, Revela, Skeleton, Spinner, Tip } from "~~/components/natichain/ui";
 import {
   CONTRATO,
   EXPLORER,
+  type Nat,
   colorDe,
   corta,
   fechaCierre,
@@ -30,6 +33,7 @@ import {
   mon,
   monNum,
   partes,
+  useAhoraCadena,
   useCountUp,
   useFaltan,
 } from "~~/components/natichain/utils";
@@ -106,7 +110,32 @@ export default function DetalleNatillera() {
   const id = BigInt(params.id ?? "0");
   const { address, isConnected } = useAccount();
 
-  const { data: n } = useScaffoldReadContract({ contractName: C, functionName: "natilleras", args: [id], watch: true });
+  const { data: nData } = useScaffoldReadContract({
+    contractName: C,
+    functionName: "obtenerNatillera",
+    args: [id],
+    watch: true,
+  });
+  const n = nData as unknown as Nat | undefined;
+  const { data: miValor } = useScaffoldReadContract({
+    contractName: C,
+    functionName: "valor",
+    args: [id, address],
+    watch: true,
+  });
+  const { data: gananciaEst } = useScaffoldReadContract({
+    contractName: C,
+    functionName: "gananciaEstimada",
+    args: [id, address],
+    watch: true,
+  });
+  const { data: idsSol } = useScaffoldReadContract({
+    contractName: C,
+    functionName: "solicitudesDe",
+    args: [id],
+    watch: true,
+  });
+  const ahora = useAhoraCadena();
   const { data: miembros } = useScaffoldReadContract({
     contractName: C,
     functionName: "obtenerMiembros",
@@ -141,8 +170,8 @@ export default function DetalleNatillera() {
   const [lluvia, setLluvia] = useState(0);
   const [copiado, setCopiado] = useState(false);
 
-  const faltan = useFaltan(n?.[4]);
-  const saldoAnimado = useCountUp(monNum(n?.[5]));
+  const faltan = useFaltan(n?.cierre);
+  const saldoAnimado = useCountUp(monNum(n?.saldo));
 
   // Cuando OTRA persona aporta a esta natillera, también llueven monedas (pantalla proyectada)
   useScaffoldWatchContractEvent({
@@ -158,7 +187,7 @@ export default function DetalleNatillera() {
 
   if (!n || faltan === undefined) return <Esqueleto />;
 
-  const [nombre, creador, cuota, numCuotas, cierre, saldo, totalActivos, fondoPen, existe] = n;
+  const { nombre, creador, cuota, numCuotas, cierre, saldo, existe } = n;
   if (!existe) {
     return (
       <Pagina>
@@ -179,10 +208,25 @@ export default function DetalleNatillera() {
   const mios = miAporte ?? 0n;
   const misCuotas = cuota > 0n ? Number(mios / cuota) : 0;
   const completo = misCuotas >= Number(numCuotas);
-  const bono = totalActivos > 0n ? (mios * fondoPen) / totalActivos : 0n;
+  const motivoOcupado = ocupado ? "Hay una transacción en curso: espera a que termine" : undefined;
+  const prestamoActivo = n.prestamoActivo !== 0n;
+  const soyAportante = !!soyMiembro && !yaSali && mios > 0n;
+  const ultimoConTerceros = soyAportante && n.aportantesActivos === 1n && n.fondoEventos + n.fondoDonaciones > 0n;
+  const motivoCalamidad = motivoOcupado
+    ? motivoOcupado
+    : mios === 0n
+      ? "Aún no has aportado nada que retirar"
+      : prestamoActivo
+        ? "Mientras el préstamo esté activo no se pueden hacer salidas de emergencia"
+        : ultimoConTerceros
+          ? "Hay plata de terceros: se libera al cierre"
+          : undefined;
+  const tx = { enviar, fase, ocupado };
+  const referencia = miValor !== undefined && miValor < mios ? miValor : mios;
+  const recibeSalida = n.aportantesActivos === 1n ? n.saldo : (referencia * 90n) / 100n;
+  const idsSolicitudes = [...(idsSol ?? [])].reverse();
   const t = partes(faltan);
   const ultimoMinuto = abierta && faltan <= 60;
-  const motivoOcupado = ocupado ? "Hay una transacción en curso: espera a que termine" : undefined;
 
   async function ejecutar<T>(nombreAccion: string, fn: () => Promise<T>, alTerminar?: (r: T) => void) {
     setError("");
@@ -407,12 +451,61 @@ export default function DetalleNatillera() {
                 Cada aporte es una transacción pública: nadie puede decir &quot;yo sí pagué&quot; sin prueba.
               </p>
             </Revela>
+
+            {soyMiembro && (
+              <Revela as="section" className="nc-card">
+                <h2 className={`nc-h3 ${display.className}`} style={{ marginBottom: 4 }}>
+                  <BanknotesIcon className="nc-ico nc-ico-inline" />
+                  Solicitudes de préstamo
+                </h2>
+                <p className="nc-help" style={{ marginBottom: 12 }}>
+                  Se presta solo si TODOS los socios aprueban.
+                </p>
+                {idsSolicitudes.length === 0 ? (
+                  <p className="nc-muted">Nadie ha pedido un préstamo todavía.</p>
+                ) : (
+                  <div style={{ display: "grid", gap: 16 }}>
+                    {idsSolicitudes.map((idSol, i) => (
+                      <SolicitudDetalle
+                        key={idSol.toString()}
+                        idSol={idSol}
+                        nat={n}
+                        miembros={miembros ?? []}
+                        address={address}
+                        soyAportante={soyAportante}
+                        ahora={ahora}
+                        tx={tx}
+                        soloEnVotacion={i >= 10}
+                      />
+                    ))}
+                  </div>
+                )}
+              </Revela>
+            )}
           </div>
 
           {/* ---------- Panel de acciones ---------- */}
           <div style={{ display: "grid", gap: 24, position: "sticky", top: 90 + 36 }}>
+            <Revela>
+              <TuDiciembre
+                n={n}
+                mios={mios}
+                miValor={miValor}
+                gananciaEst={gananciaEst}
+                personal={isConnected && !!soyMiembro}
+              />
+            </Revela>
+
             <Revela as="section" className="nc-card nc-panel">
               <h2 className={`nc-h3 ${display.className}`}>Tu natillera</h2>
+
+              {prestamoActivo && abierta && (
+                <div className="nc-aviso">
+                  <LockClosedIcon className="nc-ico nc-ico-inline" />
+                  Mientras el préstamo esté activo no pueden entrar socios nuevos ni hacerse salidas de emergencia.
+                </div>
+              )}
+              {abierta && <AvisoMora n={n} ahora={ahora} tx={tx} />}
 
               {!isConnected ? (
                 <>
@@ -426,11 +519,17 @@ export default function DetalleNatillera() {
                       Aún no haces parte. Al unirte podrás aportar <b>{mon(cuota)} MON</b> hasta {numCuotas.toString()}{" "}
                       veces.
                     </p>
-                    <Tip motivo={motivoOcupado} block>
+                    <Tip
+                      motivo={
+                        motivoOcupado ??
+                        (prestamoActivo ? "Mientras el préstamo esté activo no pueden entrar socios nuevos" : undefined)
+                      }
+                      block
+                    >
                       <button
                         className="nc-btn nc-btn-barro nc-btn-lg nc-btn-block"
                         data-fase={faseDe("unirse")}
-                        disabled={ocupado}
+                        disabled={ocupado || prestamoActivo}
                         onClick={unirse}
                       >
                         {cargando("unirse", "Unirme a la natillera")}
@@ -490,10 +589,10 @@ export default function DetalleNatillera() {
                         {cargando("retirar", "Sacar la plata ahora")}
                       </button>
                     </Tip>
-                    <Tip motivo={motivoOcupado ?? (mios === 0n ? "Aún no has aportado nada que retirar" : undefined)}>
+                    <Tip motivo={motivoCalamidad}>
                       <button
                         className="nc-btn nc-btn-sm nc-btn-ghost"
-                        disabled={ocupado || mios === 0n}
+                        disabled={!!motivoCalamidad}
                         onClick={() => setModal("emergencia")}
                       >
                         <LifebuoyIcon className="nc-ico" />
@@ -505,14 +604,29 @@ export default function DetalleNatillera() {
               ) : mios > 0n ? (
                 <>
                   <p>
-                    Tienes <b>{mon(mios + bono)} MON</b> esperándote
-                    {bono > 0n && <span className="nc-muted"> (incluye {mon(bono)} de bono por penalidades)</span>}.
+                    Tienes <b>{mon(miValor)} MON</b> esperándote
+                    {gananciaEst !== undefined && gananciaEst !== 0n && (
+                      <span className="nc-muted">
+                        {" "}
+                        ({gananciaEst > 0n ? "incluye" : "descuenta"}{" "}
+                        {mon(gananciaEst < 0n ? -gananciaEst : gananciaEst)} MON de{" "}
+                        {gananciaEst > 0n ? "ganancia" : "pérdidas"} del grupo)
+                      </span>
+                    )}
+                    .
                   </p>
-                  <Tip motivo={motivoOcupado} block>
+                  <AvisoMora n={n} ahora={ahora} tx={tx} />
+                  <Tip
+                    motivo={
+                      motivoOcupado ??
+                      (prestamoActivo ? "Hay un préstamo pendiente: debe pagarse o declararse en mora" : undefined)
+                    }
+                    block
+                  >
                     <button
                       className="nc-btn nc-btn-verde nc-btn-lg nc-btn-block"
                       data-fase={faseDe("retirar")}
-                      disabled={ocupado}
+                      disabled={ocupado || prestamoActivo}
                       onClick={retirar}
                     >
                       {cargando(
@@ -609,8 +723,8 @@ export default function DetalleNatillera() {
           <LifebuoyIcon className="nc-ico nc-ico-grande" />
           <h3 className={`nc-h3 ${display.className}`}>¿Seguro que quieres salir?</h3>
           <p className="nc-muted" style={{ margin: "10px 0 6px" }}>
-            Recibes <b style={{ color: "var(--cafe)" }}>{mon((mios * 90n) / 100n)} MON</b> ahora. El 10% (
-            {mon(mios / 10n)} MON) se queda para los que siguen ahorrando.
+            Recibes <b style={{ color: "var(--cafe)" }}>{mon(recibeSalida)} MON</b> ahora. Lo demás (
+            {mon(mios - recibeSalida)} MON) se queda para los que siguen ahorrando.
           </p>
           <p className="nc-help" style={{ marginBottom: 20 }}>
             Esta acción no se puede deshacer.

@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { formatEther } from "viem";
+import { formatEther, keccak256, toBytes } from "viem";
 import { useBlock } from "wagmi";
+import deployedContracts from "~~/contracts/deployedContracts";
 
-export const CONTRATO = "0x26A58962d00cF5DfF847C08903f8c30E6419ADd6";
+/** Dirección real del contrato: sale de deployedContracts.ts (se regenera al desplegar) */
+export const CONTRATO: string = deployedContracts[10143].NatiChain.address;
 export const EXPLORER = "https://testnet.monadvision.com";
 
 /** Muestra wei como MON legible: 0.01, 1.5, 20 */
@@ -34,6 +36,28 @@ export function mensajeError(e: unknown): string {
     .join(" | ");
   if (/User (rejected|denied)/i.test(t)) return "Cancelaste la firma en MetaMask. No pasó nada.";
   if (t.includes("Aun no es fecha de cierre")) return "BLOQUEADO";
+  if (t.includes("Hay un prestamo activo"))
+    return "Mientras el préstamo esté activo no pueden entrar socios nuevos ni hacerse salidas de emergencia.";
+  if (t.includes("Hay un prestamo pendiente"))
+    return "Hay un préstamo sin pagar. Cuando se pague o se declare en mora podrás retirar.";
+  if (t.includes("Hay fondos de terceros"))
+    return "Hay plata de terceros (boletas o donaciones): se libera al cierre, no antes.";
+  if (t.includes("Natillera llena")) return "Esta natillera ya tiene el máximo de 50 socios.";
+  if (t.includes("Monto supera el tope")) return "El monto supera el 50% de lo que hay en la alcancía.";
+  if (t.includes("Retorno invalido")) return "El retorno debe estar entre 1% y 50%.";
+  if (t.includes("Fecha limite invalida")) return "La fecha límite debe ser futura y antes del cierre de la natillera.";
+  if (t.includes("Falta la garantia")) return "Falta firmar el pagaré.";
+  if (t.includes("Solicitud no existe")) return "Esa solicitud no existe.";
+  if (t.includes("No esta en votacion")) return "Esa solicitud ya no está en votación.";
+  if (t.includes("Solicitud vencida")) return "La solicitud ya venció.";
+  if (t.includes("No eres aportante activo")) return "Solo votan los socios que ya aportaron y siguen en la natillera.";
+  if (t.includes("Ya votaste")) return "Ya votaste esta solicitud.";
+  if (t.includes("Solo el solicitante")) return "Solo quien pidió el préstamo puede cobrarlo.";
+  if (t.includes("Falta unanimidad")) return "Aún faltan socios por aprobar: se presta solo si TODOS aprueban.";
+  if (t.includes("No esta desembolsado")) return "Ese préstamo no está desembolsado.";
+  if (t.includes("Pagas mas de lo que falta")) return "Estás pagando más de lo que falta.";
+  if (t.includes("Aun no vence")) return "El préstamo todavía no vence.";
+  if (t.includes("Monto invalido")) return "El monto debe ser mayor que cero.";
   if (t.includes("La natillera ya cerro")) return "Esta natillera ya cerró: ya no recibe miembros ni aportes.";
   if (t.includes("Ya eres miembro")) return "Ya haces parte de esta natillera.";
   if (t.includes("No eres miembro activo")) return "Primero tienes que unirte a la natillera.";
@@ -44,11 +68,8 @@ export function mensajeError(e: unknown): string {
   return "Algo salió mal. Revisa tu wallet e inténtalo de nuevo.";
 }
 
-/**
- * Segundos que faltan para el cierre, usando la hora de la cadena (block.timestamp) y no la del PC.
- * Al llegar cada bloque se calcula el desfase contra el reloj local y se cuenta cada segundo con él.
- */
-export function useFaltan(cierre?: bigint) {
+/** Hora de la cadena en segundos (block.timestamp), contada localmente cada segundo entre bloques */
+export function useAhoraCadena() {
   const { data: block } = useBlock({ watch: true });
   const offset = useRef<number | undefined>(undefined);
   const [ahora, setAhora] = useState<number | undefined>(undefined);
@@ -66,6 +87,14 @@ export function useFaltan(cierre?: bigint) {
     return () => clearInterval(t);
   }, []);
 
+  return ahora;
+}
+
+/**
+ * Segundos que faltan para el cierre, usando la hora de la cadena (block.timestamp) y no la del PC.
+ */
+export function useFaltan(cierre?: bigint) {
+  const ahora = useAhoraCadena();
   if (cierre === undefined || ahora === undefined) return undefined;
   return Math.max(0, Number(cierre) - ahora);
 }
@@ -138,3 +167,68 @@ export const fechaCierre = (cierre?: bigint) =>
         hour: "numeric",
         minute: "2-digit",
       });
+
+// ---------------------------------------------------------------- Préstamos y pagaré
+
+export type Nat = {
+  nombre: string;
+  creador: string;
+  cuota: bigint;
+  numCuotas: bigint;
+  cierre: bigint;
+  saldo: bigint;
+  totalAportesActivos: bigint;
+  aportantesActivos: bigint;
+  fondoPenalidades: bigint;
+  fondoEventos: bigint;
+  fondoDonaciones: bigint;
+  fondoIntereses: bigint;
+  perdidas: bigint;
+  prestadoPendiente: bigint;
+  prestamoActivo: bigint;
+  existe: boolean;
+};
+
+export type Sol = {
+  idNat: bigint;
+  prestatario: string;
+  monto: bigint;
+  retornoBps: bigint;
+  fechaLimite: bigint;
+  solicitante: string;
+  proposito: string;
+  hashGarantia: string;
+  estado: number;
+  pagado: bigint;
+};
+
+export const ESTADOS = ["En votación", "Rechazada", "Desembolsado", "Pagado", "En mora", "Vencida"];
+
+export const gananciaPrestamo = (monto: bigint, bps: bigint) => (monto * bps) / 10000n;
+export const totalDevolver = (monto: bigint, bps: bigint) => monto + gananciaPrestamo(monto, bps);
+
+/** "+0,05" / "-0,2": monto con signo para ganancias que pueden ser negativas */
+export const monSigno = (v: bigint) => `${v > 0n ? "+" : ""}${mon(v)}`;
+
+/** Texto del pagaré: determinístico, se puede regenerar con los datos de la blockchain */
+export function textoPagare(
+  s: Pick<Sol, "prestatario" | "monto" | "retornoBps" | "fechaLimite" | "solicitante" | "proposito">,
+  natillera: string,
+) {
+  return [
+    "PAGARÉ (demostración)",
+    `Natillera: ${natillera}`,
+    `Solicitante: ${s.solicitante}`,
+    `Wallet: ${s.prestatario.toLowerCase()}`,
+    `Monto recibido: ${formatEther(s.monto)} MON`,
+    `Retorno pactado: ${Number(s.retornoBps) / 100}%`,
+    `Total a devolver: ${formatEther(totalDevolver(s.monto, s.retornoBps))} MON`,
+    `Fecha límite: ${new Date(Number(s.fechaLimite) * 1000).toISOString()}`,
+    `Propósito: ${s.proposito}`,
+    "Me obligo a devolver el total a la natillera antes de la fecha límite.",
+  ].join("\n");
+}
+
+export const hashPagare = (texto: string) => keccak256(toBytes(texto));
+
+export const pagareIntegro = (s: Sol, natillera: string) => hashPagare(textoPagare(s, natillera)) === s.hashGarantia;

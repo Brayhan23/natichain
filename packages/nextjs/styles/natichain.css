@@ -355,6 +355,42 @@
 .nc-libro-fila:last-child { border-bottom: 0; }
 .nc-libro-fila > span:first-child { flex: 1 1 280px; }
 
+/* ---------- Tu diciembre ---------- */
+.nc-cifras { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: center; gap: 8px; margin-top: 12px; text-align: center; }
+.nc-cifras > div:not(.nc-cifras-op) { background: var(--crema); border: var(--borde); border-radius: 12px; padding: 10px 6px; }
+.nc-cifras span { display: block; font-size: 0.72rem; color: var(--cafe-suave); font-weight: 600; }
+.nc-cifras b { font-size: 1.05rem; }
+.nc-cifras-op { font-weight: 800; font-size: 1.2rem; color: var(--cafe-suave); }
+.nc-cifras-total { background: var(--oro-claro) !important; }
+@media (max-width: 480px) { .nc-cifras { grid-template-columns: 1fr; } .nc-cifras-op { display: none; } }
+.nc-fuentes { display: grid; gap: 8px; }
+.nc-fuente { display: grid; grid-template-columns: 7.5rem 1fr auto; align-items: center; gap: 10px; font-size: 0.9rem; }
+.nc-fuente-barra { display: block; height: 12px; border: var(--borde); border-radius: 999px; background: var(--crema); overflow: hidden; }
+.nc-fuente-barra i { display: block; height: 100%; transition: width 0.6s ease; }
+.nc-fuente-mora { color: var(--rojo); font-weight: 700; }
+@media (max-width: 480px) { .nc-fuente { grid-template-columns: 1fr auto; } .nc-fuente-barra { grid-column: 1 / -1; order: 3; } }
+
+/* ---------- Solicitudes de préstamo ---------- */
+.nc-sol { border: var(--borde); border-radius: var(--radio); padding: 16px; background: var(--crema); }
+.nc-sol-top { display: flex; justify-content: space-between; gap: 10px; align-items: start; flex-wrap: wrap; }
+.nc-pill-votacion { background: var(--oro-claro); }
+.nc-pill-mora { background: #f6d5cf; color: var(--rojo); }
+.nc-pill-desemb { background: var(--papel); }
+.nc-sol-pagare { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: flex-start; margin-top: 12px; }
+.nc-integro { display: inline-flex; align-items: center; gap: 6px; background: var(--verde-claro); border: var(--borde); border-radius: 999px; padding: 3px 10px; font-weight: 700; font-size: 0.8rem; }
+.nc-integro-mal { background: #f6d5cf; color: var(--rojo); }
+.nc-pagare summary { cursor: pointer; font-weight: 600; font-size: 0.88rem; color: var(--barro-osc); }
+.nc-pagare pre, .nc-pagare-pre { white-space: pre-wrap; word-break: break-word; font-size: 0.82rem; background: #fffaf0; border: 2px dashed var(--cafe); border-radius: 10px; padding: 12px; margin-top: 8px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.nc-votos-fila { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.nc-votos-avatares { display: inline-flex; flex-wrap: wrap; }
+.nc-avatar-voto { margin-right: -6px; width: 24px; height: 24px; }
+.nc-nat-sel { text-align: left; font: inherit; cursor: pointer; width: 100%; }
+.nc-nat-sel[aria-pressed="true"] { background: var(--oro-claro); box-shadow: var(--sombra-lg); }
+.nc-check { display: flex; gap: 10px; align-items: center; font-weight: 600; cursor: pointer; }
+.nc-check input { width: 20px; height: 20px; accent-color: var(--barro); }
+.nc-lista-num { display: grid; gap: 10px; padding-left: 1.2rem; }
+.nc-lista-num li { list-style: decimal; padding-left: 4px; }
+
 @media (prefers-reduced-motion: reduce) {
   .nc-root *, .nc-root *::before, .nc-root *::after { animation: none !important; transition: none !important; }
 }

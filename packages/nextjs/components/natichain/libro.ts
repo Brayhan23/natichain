@@ -43,7 +43,7 @@ function aMov(log: any): Mov | undefined {
     case "SalidaEmergencia":
       return { ...base, quien: a.miembro, monto: a.devuelto, extra: a.penalidad };
     default:
-      return { ...base, quien: a.miembro, monto: a.monto, extra: a.bono };
+      return { ...base, quien: a.miembro, monto: a.pagado };
   }
 }
 
@@ -169,8 +169,13 @@ export function useLibro() {
     Promise.all(
       faltan.map(i =>
         client
-          .readContract({ address: info.address, abi: info.abi, functionName: "natilleras", args: [BigInt(i)] } as any)
-          .then((r: any) => [i, r[0] as string] as const)
+          .readContract({
+            address: info.address,
+            abi: info.abi,
+            functionName: "obtenerNatillera",
+            args: [BigInt(i)],
+          } as any)
+          .then((r: any) => [i, r.nombre as string] as const)
           .catch(() => undefined),
       ),
     ).then(r => {
